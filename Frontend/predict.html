@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Understanding Kyphosis - Medical AI Prediction Tool</title>
+    <title>Kyphosis Prediction Tool - AI Medical Assessment</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Learn about kyphosis, a spinal condition, and use our AI-powered prediction tool for educational purposes.">
+    <meta name="description" content="Use our AI-powered tool to predict kyphosis risk based on surgical parameters for educational purposes.">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -29,162 +29,151 @@
     <div class="container">
         <!-- Hero Section -->
         <section class="hero">
-            <h1>Understanding Kyphosis</h1>
-            <p>Learn about this spinal condition and explore AI-powered prediction tools for educational purposes</p>
-            <a href="predict.html" class="btn btn-large">Try Prediction Tool</a>
+            <h1>Kyphosis Prediction Tool</h1>
+            <p>Enter surgical parameters to get an AI-powered risk assessment</p>
         </section>
 
-        <!-- What is Kyphosis Section -->
+        <!-- Prediction Form -->
         <section class="card">
-            <h2>What is Kyphosis?</h2>
-            <p>
-                Kyphosis is a spinal condition characterized by an excessive outward curvature of the upper spine, 
-                creating a rounded or "hunchback" appearance. While some degree of curvature is normal, 
-                kyphosis occurs when this curve becomes more pronounced than typical.
+            <h2>Patient Data Input</h2>
+            <p style="color: #ccc; margin-bottom: 2rem;">
+                This tool analyzes surgical parameters to predict the likelihood of post-operative kyphosis development.
+                All fields are required for accurate prediction.
             </p>
-            <p>
-                The normal spine has natural curves that help distribute weight and provide flexibility. 
-                In kyphosis, the thoracic (upper back) region curves excessively forward, which can lead to 
-                both cosmetic concerns and functional problems.
-            </p>
-            
-            <div class="image-grid">
-                <div>
-                    <img src="assets/spine-comparison.png" 
-                         alt="Comparison between normal spine curvature and kyphotic spine showing excessive forward curve" 
-                         class="medical-image"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; text-align:center; padding:2rem; background:#2a2a2a; border:1px dashed #555; border-radius:8px;">
-                        <p style="color:#87ceeb;">📊 Spine Comparison Diagram</p>
-                        <p style="color:#ccc; font-size:0.9rem;">Normal vs Kyphotic Spine Curvature</p>
-                    </div>
+
+            <form id="prediction-form">
+                <div class="form-group">
+                    <label for="age">Patient Age (months)</label>
+                    <input
+                        type="number"
+                        id="age"
+                        name="age"
+                        required
+                        min="1"
+                        max="250"
+                        placeholder="e.g., 120"
+                    >
+                    <small>Enter the patient's age in months (1-250). For reference: 12 months = 1 year, 120 months = 10 years.</small>
+                    <div class="error-message" id="age-error"></div>
                 </div>
-                <div>
-                    <img src="assets/kyphosis-xray.png" 
-                         alt="X-ray image showing kyphotic spine with measured curve angle" 
-                         class="medical-image"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; text-align:center; padding:2rem; background:#2a2a2a; border:1px dashed #555; border-radius:8px;">
-                        <p style="color:#87ceeb;">🩻 X-ray Analysis</p>
-                        <p style="color:#ccc; font-size:0.9rem;">Radiographic Assessment of Kyphosis</p>
-                    </div>
+
+                <div class="form-group">
+                    <label for="number">Number of Vertebrae Involved</label>
+                    <input
+                        type="number"
+                        id="number"
+                        name="number"
+                        required
+                        min="1"
+                        max="20"
+                        placeholder="e.g., 5"
+                    >
+                    <small>Total number of vertebrae involved in the surgical procedure (1-20). More vertebrae typically indicate more extensive surgery.</small>
+                    <div class="error-message" id="number-error"></div>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label for="start">Starting Vertebra Level</label>
+                    <input
+                        type="number"
+                        id="start"
+                        name="start"
+                        required
+                        min="1"
+                        max="20"
+                        placeholder="e.g., 12"
+                    >
+                    <small>The topmost vertebra level where surgery begins (1-20). Lower numbers indicate surgery higher up the spine.</small>
+                    <div class="error-message" id="start-error"></div>
+                </div>
+
+                <button type="submit" id="predict-btn" class="btn btn-large">
+                    <span class="btn-text">Predict Kyphosis Risk</span>
+                </button>
+            </form>
         </section>
 
-        <!-- How it Happens Section -->
-        <section class="card">
-            <h2>How Kyphosis Develops</h2>
-            <div class="two-column">
-                <div>
-                    <h3>Common Causes:</h3>
-                    <ul>
-                        <li><strong>Postural Kyphosis:</strong> Most common type, often develops from poor posture habits, especially in adolescents who spend long hours hunched over devices or desks.</li>
-                        <li><strong>Scheuermann's Disease:</strong> A structural condition that typically appears during adolescence (ages 10-15), where vertebrae develop wedge shapes causing fixed curvature.</li>
-                        <li><strong>Congenital Kyphosis:</strong> Present from birth due to malformed vertebrae or failure of spinal segments to separate properly during development.</li>
-                        <li><strong>Degenerative Kyphosis:</strong> Age-related changes including disc degeneration, vertebral compression fractures, and muscle weakness.</li>
-                    </ul>
+        <!-- Results Section -->
+        <section id="results-section" style="display: none;">
+            <div class="result-card" id="result-card">
+                <div class="result-text" id="result-text">
+                    <!-- Result will be populated by JavaScript -->
                 </div>
-                <div>
-                    <img src="assets/posture-illustration.png" 
-                         alt="Illustration showing progression from good posture to kyphotic posture" 
-                         class="medical-image"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; text-align:center; padding:2rem; background:#2a2a2a; border:1px dashed #555; border-radius:8px;">
-                        <p style="color:#87ceeb;">👤 Posture Analysis</p>
-                        <p style="color:#ccc; font-size:0.9rem;">Postural Development Illustration</p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Age and Demographics Section -->
-        <section class="card">
-            <h2>Who Does Kyphosis Affect?</h2>
-            <div class="three-column">
-                <div class="tech-card">
-                    <div class="tech-icon">👶</div>
-                    <h3>Children (0-10 years)</h3>
-                    <p>Congenital forms may be present at birth. Early intervention is crucial for severe cases.</p>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidence-fill"></div>
                 </div>
-                <div class="tech-card">
-                    <div class="tech-icon">🧒</div>
-                    <h3>Adolescents (10-18 years)</h3>
-                    <p>Peak time for Scheuermann's disease development. Postural kyphosis also common due to growth spurts and lifestyle factors.</p>
+                <div class="confidence-text" id="confidence-text">
+                    <!-- Confidence will be populated by JavaScript -->
                 </div>
-                <div class="tech-card">
-                    <div class="tech-icon">👴</div>
-                    <h3>Adults (40+ years)</h3>
-                    <p>Degenerative changes become more common, especially in postmenopausal women due to osteoporosis risk.</p>
-                </div>
-            </div>
-            
-            <p style="margin-top: 2rem;">
-                <strong>Key Statistics:</strong> Scheuermann's kyphosis affects approximately 1-8% of the population, 
-                with peak onset between ages 10-15. Postural kyphosis is much more common but often less severe. 
-                The condition affects both males and females, though Scheuermann's disease shows a slight male predominance.
-            </p>
-        </section>
 
-        <!-- Symptoms Section -->
-        <section class="card">
-            <h2>Signs and Symptoms</h2>
-            <div class="two-column">
-                <div>
-                    <h3>Physical Appearance:</h3>
-                    <ul>
-                        <li>Visible rounded back or "hump"</li>
-                        <li>Forward head posture</li>
-                        <li>Shoulders that appear uneven</li>
-                        <li>Prominent shoulder blades</li>
-                        <li>Difficulty standing completely upright</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Symptoms:</h3>
-                    <ul>
-                        <li>Upper back pain and stiffness</li>
-                        <li>Muscle fatigue from compensatory posturing</li>
-                        <li>Limited spinal flexibility</li>
-                        <li>In severe cases: breathing difficulties</li>
-                        <li>Rare cases: neurological symptoms</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="disclaimer medical-attention">
-                <h3>When to Seek Medical Attention</h3>
-                <p>
-                    Consult a healthcare professional if you notice progressive spinal curvature, persistent back pain, 
-                    breathing difficulties, or neurological symptoms. Early diagnosis and treatment can prevent 
-                    progression and improve outcomes.
+                <p style="margin-top: 2rem; color: #ccc; font-size: 0.95rem; line-height: 1.6;">
+                    <strong>Important:</strong> This is a statistical estimate based on a machine learning model
+                    trained on historical surgical data. It should not be used for actual medical diagnosis or
+                    treatment decisions. Always consult with qualified healthcare professionals.
                 </p>
+
+                <button type="button" id="reset-btn" class="btn btn-secondary" style="margin-top: 1rem;">
+                    Make Another Prediction
+                </button>
             </div>
         </section>
 
-        <!-- CTA Section -->
-        <section class="card" style="text-align: center; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); border-color: #3b82f6;">
-            <h2>Explore Our AI Prediction Tool</h2>
-            <p>
-                Our machine learning model can help assess kyphosis risk based on surgical parameters. 
-                This tool is designed for educational purposes and medical research applications.
-            </p>
-            <a href="predict.html" class="btn btn-large" style="margin: 1rem;">Try Prediction Tool</a>
-            <a href="about.html" class="btn btn-secondary btn-large" style="margin: 1rem;">Learn About the Model</a>
+        <!-- Information Cards -->
+        <div class="two-column" style="margin-top: 3rem;">
+            <section class="card">
+                <h3>Understanding the Parameters</h3>
+                <ul>
+                    <li><strong>Age:</strong> Younger patients may have different healing responses and growth patterns that affect outcomes.</li>
+                    <li><strong>Vertebrae Count:</strong> More extensive surgeries (involving more vertebrae) may have different risk profiles.</li>
+                    <li><strong>Starting Level:</strong> The location where surgery begins can influence biomechanical outcomes.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h3>Interpreting Results</h3>
+                <ul>
+                    <li><strong>High Confidence (>80%):</strong> Model is very certain about the prediction based on similar cases in training data.</li>
+                    <li><strong>Moderate Confidence (50-80%):</strong> Reasonable certainty, but additional clinical factors should be considered.</li>
+                    <li><strong>Low Confidence (<50%):</strong> Uncertain prediction - clinical expertise is essential for decision-making.</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- Sample Cases -->
+        <section class="card">
+            <h3>Try Sample Cases</h3>
+            <p style="color: #ccc; margin-bottom: 1rem;">Click on these examples to quickly test the prediction tool:</p>
+
+            <div class="tech-grid">
+                <div class="tech-card sample-case" style="cursor: pointer;"
+                     data-age="71" data-number="3" data-start="5">
+                    <h4 style="color: #87ceeb;">Case 1: Low Risk</h4>
+                    <p>Age: 71 months<br>Vertebrae: 3<br>Start: Level 5</p>
+                </div>
+
+                <div class="tech-card sample-case" style="cursor: pointer;"
+                     data-age="158" data-number="3" data-start="14">
+                    <h4 style="color: #87ceeb;">Case 2: Moderate Risk</h4>
+                    <p>Age: 158 months<br>Vertebrae: 3<br>Start: Level 14</p>
+                </div>
+
+                <div class="tech-card sample-case" style="cursor: pointer;"
+                     data-age="42" data-number="6" data-start="11">
+                    <h4 style="color: #87ceeb;">Case 3: Higher Risk</h4>
+                    <p>Age: 42 months<br>Vertebrae: 6<br>Start: Level 11</p>
+                </div>
+            </div>
         </section>
 
         <!-- Medical Disclaimer -->
         <section class="disclaimer">
-            <h3>Important Medical Disclaimer</h3>
+            <h3>Medical Disclaimer</h3>
             <p>
-                This application is an educational tool designed for learning about machine learning in healthcare contexts. 
-                It should <strong>never be used for actual medical diagnosis or treatment decisions</strong>. 
-                The predictions are based on statistical models and historical data patterns, not real-time clinical assessment.
-            </p>
-            <p>
-                Always consult with qualified healthcare professionals, including orthopedic specialists or spine surgeons, 
-                for accurate diagnosis and treatment of spinal conditions. If you suspect you or someone else may have 
-                kyphosis, seek proper medical evaluation and imaging studies.
+                This prediction tool is designed for <strong>educational and research purposes only</strong>.
+                It should never replace professional medical judgment or be used for actual patient care decisions.
+                The model is trained on historical data and may not account for individual patient factors,
+                new surgical techniques, or rare conditions.
             </p>
         </section>
     </div>
@@ -195,20 +184,224 @@
 
     <script src="script.js"></script>
     <script>
-        // Page-specific JavaScript
-        function initHomePage() {
-            console.log('Home page initialized');
-            
-            // Add smooth scrolling for internal links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
+        // Page-specific JavaScript for Predict page
+        function initPredictPage() {
+            const form = document.getElementById('prediction-form');
+            const predictBtn = document.getElementById('predict-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const resultsSection = document.getElementById('results-section');
+            const resultCard = document.getElementById('result-card');
+            const resultText = document.getElementById('result-text');
+
+            // Form submission
+            form.addEventListener('submit', handleFormSubmit);
+
+            // Reset functionality
+            resetBtn.addEventListener('click', resetForm);
+
+            // Sample case clicks
+            document.querySelectorAll('.sample-case').forEach(card => {
+                card.addEventListener('click', () => {
+                    const age = card.dataset.age;
+                    const number = card.dataset.number;
+                    const start = card.dataset.start;
+
+                    document.getElementById('age').value = age;
+                    document.getElementById('number').value = number;
+                    document.getElementById('start').value = start;
+
+                    // Clear any existing errors
+                    clearErrors();
                 });
             });
+
+            // Real-time validation
+            addInputValidation();
+
+            console.log('Predict page initialized');
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            console.log('Form submitted');
+
+            // Clear previous errors
+            clearErrors();
+            hideError();
+
+            // Get form data
+            const formData = {
+                age: parseInt(document.getElementById('age').value),
+                number: parseInt(document.getElementById('number').value),
+                start: parseInt(document.getElementById('start').value)
+            };
+
+            console.log('Form data:', formData);
+
+            // Validate input
+            if (!validateFormData(formData)) {
+                console.log('Form validation failed');
+                return;
+            }
+
+            // Show loading state
+            const resultsSection = document.getElementById('results-section');
+            setButtonLoading(document.getElementById('predict-btn'), true);
+            resultsSection.style.display = 'none';
+
+            try {
+                // Make prediction
+                console.log('Making prediction...');
+                const result = await makePrediction(formData);
+                console.log('Prediction successful:', result);
+
+                // Display result
+                displayPredictionResult(result);
+
+            } catch (error) {
+                console.error('Prediction error:', error);
+                displayError(error.message);
+            } finally {
+                setButtonLoading(document.getElementById('predict-btn'), false);
+            }
+        }
+
+        function validateFormData(data) {
+            let isValid = true;
+
+            // Age validation
+            const ageError = validateInput(data.age, 1, 250, 'Age');
+            if (ageError) {
+                showFieldError('age', ageError);
+                isValid = false;
+            }
+
+            // Number validation
+            const numberError = validateInput(data.number, 1, 20, 'Number of vertebrae');
+            if (numberError) {
+                showFieldError('number', numberError);
+                isValid = false;
+            }
+
+            // Start validation
+            const startError = validateInput(data.start, 1, 20, 'Starting vertebra level');
+            if (startError) {
+                showFieldError('start', startError);
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(fieldName, message) {
+            const errorElement = document.getElementById(`${fieldName}-error`);
+            const inputElement = document.getElementById(fieldName);
+
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            if (inputElement) {
+                inputElement.style.borderColor = '#ff6b6b';
+            }
+        }
+
+        function clearErrors() {
+            ['age', 'number', 'start'].forEach(fieldName => {
+                const errorElement = document.getElementById(`${fieldName}-error`);
+                const inputElement = document.getElementById(fieldName);
+
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+
+                if (inputElement) {
+                    inputElement.style.borderColor = '#444';
+                }
+            });
+        }
+
+        function displayPredictionResult(result) {
+            console.log('Displaying prediction result:', result);
+
+            const { prediction, confidence } = result;
+            const resultsSection = document.getElementById('results-section');
+            const resultCard = document.getElementById('result-card');
+            const resultText = document.getElementById('result-text');
+
+            console.log('Elements found:', {
+                resultsSection: !!resultsSection,
+                resultCard: !!resultCard,
+                resultText: !!resultText
+            });
+
+            // Update result text and styling
+            if (prediction === 'present') {
+                resultText.textContent = 'Kyphosis Likely Present';
+                resultCard.className = 'result-card positive';
+            } else {
+                resultText.textContent = 'Kyphosis Likely Absent';
+                resultCard.className = 'result-card negative';
+            }
+
+            console.log('Updated result text to:', resultText.textContent);
+            console.log('Updated result card class to:', resultCard.className);
+
+            // Show results section
+            resultsSection.style.display = 'block';
+            console.log('Results section display set to:', resultsSection.style.display);
+
+            // Animate confidence bar
+            animateConfidenceBar(confidence);
+
+            // Scroll to results
+            scrollToElement('results-section');
+        }
+
+        function resetForm() {
+            document.getElementById('prediction-form').reset();
+            document.getElementById('results-section').style.display = 'none';
+            clearErrors();
+            hideError();
+
+            // Focus on first input
+            document.getElementById('age').focus();
+        }
+
+        function addInputValidation() {
+            // Age input validation
+            document.getElementById('age').addEventListener('input', function() {
+                validateSingleInput(this, 1, 250, 'age');
+            });
+
+            // Number input validation
+            document.getElementById('number').addEventListener('input', function() {
+                validateSingleInput(this, 1, 20, 'number');
+            });
+
+            // Start input validation
+            document.getElementById('start').addEventListener('input', function() {
+                validateSingleInput(this, 1, 20, 'start');
+            });
+        }
+
+        function validateSingleInput(input, min, max, fieldName) {
+            const value = parseInt(input.value);
+            const errorElement = document.getElementById(`${fieldName}-error`);
+
+            if (input.value && (isNaN(value) || value < min || value > max)) {
+                input.style.borderColor = '#ff6b6b';
+                if (errorElement) {
+                    errorElement.textContent = `Must be between ${min} and ${max}`;
+                    errorElement.style.display = 'block';
+                }
+            } else {
+                input.style.borderColor = '#444';
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
         }
     </script>
 </body>
