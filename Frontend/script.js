@@ -1,408 +1,456 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kyphosis Prediction Tool - AI Medical Assessment</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Use our AI-powered tool to predict kyphosis risk based on surgical parameters for educational purposes.">
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-brand">Kyphosis AI</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="predict.html">Predict</a></li>
-                <li><a href="about.html">About</a></li>
-            </ul>
-            <div class="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
+/**
+ * Shared JavaScript for Kyphosis Prediction App
+ * Handles navigation highlighting, API calls, and common functionality
+ */
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>Kyphosis Prediction Tool</h1>
-            <p>Enter surgical parameters to get an AI-powered risk assessment</p>
-        </section>
+// Configuration
+const API_BASE_URL = 'http://localhost:8000';
 
-        <!-- Prediction Form -->
-        <section class="card">
-            <h2>Patient Data Input</h2>
-            <p style="color: #ccc; margin-bottom: 2rem;">
-                This tool analyzes surgical parameters to predict the likelihood of post-operative kyphosis development.
-                All fields are required for accurate prediction.
-            </p>
+/**
+ * Initialize the application
+ */
+function init() {
+    // Highlight current page in navigation
+    highlightCurrentPage();
 
-            <form id="prediction-form">
-                <div class="form-group">
-                    <label for="age">Patient Age (months)</label>
-                    <input 
-                        type="number" 
-                        id="age" 
-                        name="age" 
-                        required 
-                        min="1" 
-                        max="250"
-                        placeholder="e.g., 120"
-                    >
-                    <small>Enter the patient's age in months (1-250). For reference: 12 months = 1 year, 120 months = 10 years.</small>
-                    <div class="error-message" id="age-error"></div>
-                </div>
+    // Setup mobile navigation toggle
+    setupMobileNav();
 
-                <div class="form-group">
-                    <label for="number">Number of Vertebrae Involved</label>
-                    <input 
-                        type="number" 
-                        id="number" 
-                        name="number" 
-                        required 
-                        min="1" 
-                        max="20"
-                        placeholder="e.g., 5"
-                    >
-                    <small>Total number of vertebrae involved in the surgical procedure (1-20). More vertebrae typically indicate more extensive surgery.</small>
-                    <div class="error-message" id="number-error"></div>
-                </div>
+    // Add keyboard navigation
+    addKeyboardNavigation();
 
-                <div class="form-group">
-                    <label for="start">Starting Vertebra Level</label>
-                    <input 
-                        type="number" 
-                        id="start" 
-                        name="start" 
-                        required 
-                        min="1" 
-                        max="20"
-                        placeholder="e.g., 12"
-                    >
-                    <small>The topmost vertebra level where surgery begins (1-20). Lower numbers indicate surgery higher up the spine.</small>
-                    <div class="error-message" id="start-error"></div>
-                </div>
+    // Initialize animated background
+    initAnimatedBackground();
 
-                <button type="submit" id="predict-btn" class="btn btn-large">
-                    <span class="btn-text">Predict Kyphosis Risk</span>
-                </button>
-            </form>
-        </section>
+    // Initialize custom cursor
+    initCustomCursor();
 
-        <!-- Results Section -->
-        <section id="results-section" style="display: none;">
-            <div class="result-card" id="result-card">
-                <div class="result-text" id="result-text">
-                    <!-- Result will be populated by JavaScript -->
-                </div>
-                
-                <div class="confidence-bar">
-                    <div class="confidence-fill" id="confidence-fill"></div>
-                </div>
-                <div class="confidence-text" id="confidence-text">
-                    <!-- Confidence will be populated by JavaScript -->
-                </div>
-                
-                <p style="margin-top: 2rem; color: #ccc; font-size: 0.95rem; line-height: 1.6;">
-                    <strong>Important:</strong> This is a statistical estimate based on a machine learning model 
-                    trained on historical surgical data. It should not be used for actual medical diagnosis or 
-                    treatment decisions. Always consult with qualified healthcare professionals.
-                </p>
-                
-                <button type="button" id="reset-btn" class="btn btn-secondary" style="margin-top: 1rem;">
-                    Make Another Prediction
-                </button>
-            </div>
-        </section>
+    console.log('Kyphosis Prediction App initialized');
+}
 
-        <!-- Information Cards -->
-        <div class="two-column" style="margin-top: 3rem;">
-            <section class="card">
-                <h3>Understanding the Parameters</h3>
-                <ul>
-                    <li><strong>Age:</strong> Younger patients may have different healing responses and growth patterns that affect outcomes.</li>
-                    <li><strong>Vertebrae Count:</strong> More extensive surgeries (involving more vertebrae) may have different risk profiles.</li>
-                    <li><strong>Starting Level:</strong> The location where surgery begins can influence biomechanical outcomes.</li>
-                </ul>
-            </section>
+/**
+ * Initialize animated starfield background
+ */
+function initAnimatedBackground() {
+    const starsContainer = document.createElement('div');
+    starsContainer.className = 'stars-container';
+    document.body.appendChild(starsContainer);
 
-            <section class="card">
-                <h3>Interpreting Results</h3>
-                <ul>
-                    <li><strong>High Confidence (>80%):</strong> Model is very certain about the prediction based on similar cases in training data.</li>
-                    <li><strong>Moderate Confidence (50-80%):</strong> Reasonable certainty, but additional clinical factors should be considered.</li>
-                    <li><strong>Low Confidence (<50%):</strong> Uncertain prediction - clinical expertise is essential for decision-making.</li>
-                </ul>
-            </section>
-        </div>
+    // Create twinkling stars
+    for (let i = 0; i < 100; i++) {
+        createStar(starsContainer);
+    }
 
-        <!-- Sample Cases -->
-        <section class="card">
-            <h3>Try Sample Cases</h3>
-            <p style="color: #ccc; margin-bottom: 1rem;">Click on these examples to quickly test the prediction tool:</p>
-            
-            <div class="tech-grid">
-                <div class="tech-card sample-case" style="cursor: pointer;" 
-                     data-age="71" data-number="3" data-start="5">
-                    <h4 style="color: #87ceeb;">Case 1: Low Risk</h4>
-                    <p>Age: 71 months<br>Vertebrae: 3<br>Start: Level 5</p>
-                </div>
-                
-                <div class="tech-card sample-case" style="cursor: pointer;" 
-                     data-age="158" data-number="3" data-start="14">
-                    <h4 style="color: #87ceeb;">Case 2: Moderate Risk</h4>
-                    <p>Age: 158 months<br>Vertebrae: 3<br>Start: Level 14</p>
-                </div>
-                
-                <div class="tech-card sample-case" style="cursor: pointer;" 
-                     data-age="42" data-number="6" data-start="11">
-                    <h4 style="color: #87ceeb;">Case 3: Higher Risk</h4>
-                    <p>Age: 42 months<br>Vertebrae: 6<br>Start: Level 11</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Medical Disclaimer -->
-        <section class="disclaimer">
-            <h3>Medical Disclaimer</h3>
-            <p>
-                This prediction tool is designed for <strong>educational and research purposes only</strong>. 
-                It should never replace professional medical judgment or be used for actual patient care decisions. 
-                The model is trained on historical data and may not account for individual patient factors, 
-                new surgical techniques, or rare conditions.
-            </p>
-        </section>
-    </div>
-
-    <!-- Error Container -->
-    <div id="error-container" style="display: none;"></div>
-    <div id="network-error" style="display: none;"></div>
-
-    <script src="script.js"></script>
-    <script>
-        // Page-specific JavaScript for Predict page
-        function initPredictPage() {
-            const form = document.getElementById('prediction-form');
-            const predictBtn = document.getElementById('predict-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const resultsSection = document.getElementById('results-section');
-            const resultCard = document.getElementById('result-card');
-            const resultText = document.getElementById('result-text');
-            
-            // Form submission
-            form.addEventListener('submit', handleFormSubmit);
-            
-            // Reset functionality
-            resetBtn.addEventListener('click', resetForm);
-            
-            // Sample case clicks
-            document.querySelectorAll('.sample-case').forEach(card => {
-                card.addEventListener('click', () => {
-                    const age = card.dataset.age;
-                    const number = card.dataset.number;
-                    const start = card.dataset.start;
-                    
-                    document.getElementById('age').value = age;
-                    document.getElementById('number').value = number;
-                    document.getElementById('start').value = start;
-                    
-                    // Clear any existing errors
-                    clearErrors();
-                });
-            });
-            
-            // Real-time validation
-            addInputValidation();
-            
-            console.log('Predict page initialized');
+    // Create occasional shooting stars
+    setInterval(() => {
+        if (Math.random() < 0.1) { // 10% chance every interval
+            createShootingStar(starsContainer);
         }
+    }, 3000);
+}
 
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            console.log('Form submitted');
-            
-            // Clear previous errors
-            clearErrors();
-            hideError();
-            
-            // Get form data
-            const formData = {
-                age: parseInt(document.getElementById('age').value),
-                number: parseInt(document.getElementById('number').value),
-                start: parseInt(document.getElementById('start').value)
-            };
-            
-            console.log('Form data:', formData);
-            
-            // Validate input
-            if (!validateFormData(formData)) {
-                console.log('Form validation failed');
-                return;
+/**
+ * Create a twinkling star
+ */
+function createStar(container) {
+    const star = document.createElement('div');
+    star.className = 'star';
+
+    // Random position
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+
+    // Random size (1-3px)
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+
+    // Random animation duration (2-4 seconds)
+    star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+
+    // Random delay
+    star.style.animationDelay = Math.random() * 3 + 's';
+
+    container.appendChild(star);
+}
+
+/**
+ * Create a shooting star
+ */
+function createShootingStar(container) {
+    const shootingStar = document.createElement('div');
+    shootingStar.className = 'shooting-star';
+
+    // Random starting position (off-screen left, random height)
+    shootingStar.style.left = '-100px';
+    shootingStar.style.top = Math.random() * 50 + '%';
+
+    // Random width (50-200px)
+    shootingStar.style.width = (Math.random() * 150 + 50) + 'px';
+
+    // Random animation duration (3-6 seconds)
+    shootingStar.style.animationDuration = (Math.random() * 3 + 3) + 's';
+
+    container.appendChild(shootingStar);
+
+    // Remove after animation
+    setTimeout(() => {
+        if (shootingStar.parentNode) {
+            shootingStar.parentNode.removeChild(shootingStar);
+        }
+    }, 8000);
+}
+
+/**
+ * Initialize custom cursor glow effect
+ */
+function initCustomCursor() {
+    // Don't show custom cursor on touch devices
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        document.body.style.cursor = 'default';
+        return;
+    }
+
+    const cursorGlow = document.createElement('div');
+    cursorGlow.className = 'cursor-glow';
+    document.body.appendChild(cursorGlow);
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+
+    // Track mouse movement
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    // Smooth cursor following animation
+    function animateCursor() {
+        const dx = mouseX - cursorX;
+        const dy = mouseY - cursorY;
+
+        cursorX += dx * 0.1;
+        cursorY += dy * 0.1;
+
+        cursorGlow.style.left = (cursorX - 20) + 'px';
+        cursorGlow.style.top = (cursorY - 20) + 'px';
+
+        requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    // Hide cursor when leaving window
+    document.addEventListener('mouseleave', () => {
+        cursorGlow.style.opacity = '0';
+    });
+
+    document.addEventListener('mouseenter', () => {
+        cursorGlow.style.opacity = '1';
+    });
+
+    // Enhance cursor on hover over interactive elements
+    const interactiveElements = 'a, button, input, .nav-toggle, .sample-case, .tech-card';
+
+    document.addEventListener('mouseover', (e) => {
+        if (e.target.matches(interactiveElements)) {
+            cursorGlow.style.transform = 'scale(1.5)';
+            cursorGlow.style.background = `radial-gradient(
+                circle,
+                rgba(135, 206, 235, 1) 0%,
+                rgba(135, 206, 235, 0.6) 30%,
+                rgba(135, 206, 235, 0.2) 60%,
+                transparent 100%
+            )`;
+        }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+        if (e.target.matches(interactiveElements)) {
+            cursorGlow.style.transform = 'scale(1)';
+            cursorGlow.style.background = `radial-gradient(
+                circle,
+                rgba(135, 206, 235, 0.8) 0%,
+                rgba(135, 206, 235, 0.4) 30%,
+                rgba(135, 206, 235, 0.1) 60%,
+                transparent 100%
+            )`;
+        }
+    });
+}
+
+/**
+ * Highlight the current page in navigation
+ */
+function highlightCurrentPage() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage ||
+           (currentPage === '' && href === 'index.html') ||
+           (currentPage === 'index.html' && href === 'index.html')) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
+/**
+ * Setup mobile navigation toggle
+ */
+function setupMobileNav() {
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile nav when clicking a link
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navLinks.classList.remove('active');
             }
-            
-            // Show loading state
-            const resultsSection = document.getElementById('results-section');
-            setButtonLoading(document.getElementById('predict-btn'), true);
-            resultsSection.style.display = 'none';
-            
-            try {
-                // Make prediction
-                console.log('Making prediction...');
-                const result = await makePrediction(formData);
-                console.log('Prediction successful:', result);
-                
-                // Display result
-                displayPredictionResult(result);
-                
-            } catch (error) {
-                console.error('Prediction error:', error);
-                displayError(error.message);
-            } finally {
-                setButtonLoading(document.getElementById('predict-btn'), false);
+        });
+    }
+}
+
+/**
+ * Add keyboard navigation support
+ */
+function addKeyboardNavigation() {
+    document.addEventListener('keydown', (event) => {
+        // Escape key closes mobile nav
+        if (event.key === 'Escape') {
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks) {
+                navLinks.classList.remove('active');
             }
         }
+    });
+}
 
-        function validateFormData(data) {
-            let isValid = true;
-            
-            // Age validation
-            const ageError = validateInput(data.age, 1, 250, 'Age');
-            if (ageError) {
-                showFieldError('age', ageError);
-                isValid = false;
-            }
-            
-            // Number validation
-            const numberError = validateInput(data.number, 1, 20, 'Number of vertebrae');
-            if (numberError) {
-                showFieldError('number', numberError);
-                isValid = false;
-            }
-            
-            // Start validation
-            const startError = validateInput(data.start, 1, 20, 'Starting vertebra level');
-            if (startError) {
-                showFieldError('start', startError);
-                isValid = false;
-            }
-            
-            return isValid;
+/**
+ * Fetch model metrics from API
+ */
+async function fetchModelMetrics() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/metrics`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        function showFieldError(fieldName, message) {
-            const errorElement = document.getElementById(`${fieldName}-error`);
-            const inputElement = document.getElementById(fieldName);
-            
-            if (errorElement) {
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            }
-            
-            if (inputElement) {
-                inputElement.style.borderColor = '#ff6b6b';
-            }
-        }
+        return await response.json();
+    } catch (error) {
+        console.error('Failed to fetch metrics:', error);
+        throw new Error('Unable to load model metrics. Please ensure the backend server is running.');
+    }
+}
 
-        function clearErrors() {
-            ['age', 'number', 'start'].forEach(fieldName => {
-                const errorElement = document.getElementById(`${fieldName}-error`);
-                const inputElement = document.getElementById(fieldName);
-                
-                if (errorElement) {
-                    errorElement.style.display = 'none';
-                }
-                
-                if (inputElement) {
-                    inputElement.style.borderColor = '#444';
-                }
-            });
-        }
+/**
+ * Make prediction API call
+ */
+async function makePrediction(formData) {
+    console.log('Making prediction with data:', formData);
 
-        function displayPredictionResult(result) {
-            console.log('Displaying prediction result:', result);
-            
-            const { prediction, confidence } = result;
-            const resultsSection = document.getElementById('results-section');
-            const resultCard = document.getElementById('result-card');
-            const resultText = document.getElementById('result-text');
-            
-            console.log('Elements found:', {
-                resultsSection: !!resultsSection,
-                resultCard: !!resultCard,
-                resultText: !!resultText
-            });
-            
-            // Update result text and styling
-            if (prediction === 'present') {
-                resultText.textContent = 'Kyphosis Likely Present';
-                resultCard.className = 'result-card positive';
+    const response = await fetch(`${API_BASE_URL}/predict`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    });
+
+    console.log('Response status:', response.status);
+
+    if (!response.ok) {
+        let errorMsg = 'Network error occurred';
+
+        try {
+            const errorData = await response.json();
+            errorMsg = errorData.detail || `Server error: ${response.status}`;
+        } catch (e) {
+            if (response.status === 0 || !response.status) {
+                errorMsg = 'Cannot connect to server. Please make sure the backend is running on http://localhost:8000';
             } else {
-                resultText.textContent = 'Kyphosis Likely Absent';
-                resultCard.className = 'result-card negative';
-            }
-            
-            console.log('Updated result text to:', resultText.textContent);
-            console.log('Updated result card class to:', resultCard.className);
-            
-            // Show results section
-            resultsSection.style.display = 'block';
-            console.log('Results section display set to:', resultsSection.style.display);
-            
-            // Animate confidence bar
-            animateConfidenceBar(confidence);
-            
-            // Scroll to results
-            scrollToElement('results-section');
-        }
-
-        function resetForm() {
-            document.getElementById('prediction-form').reset();
-            document.getElementById('results-section').style.display = 'none';
-            clearErrors();
-            hideError();
-            
-            // Focus on first input
-            document.getElementById('age').focus();
-        }
-
-        function addInputValidation() {
-            // Age input validation
-            document.getElementById('age').addEventListener('input', function() {
-                validateSingleInput(this, 1, 250, 'age');
-            });
-            
-            // Number input validation
-            document.getElementById('number').addEventListener('input', function() {
-                validateSingleInput(this, 1, 20, 'number');
-            });
-            
-            // Start input validation
-            document.getElementById('start').addEventListener('input', function() {
-                validateSingleInput(this, 1, 20, 'start');
-            });
-        }
-
-        function validateSingleInput(input, min, max, fieldName) {
-            const value = parseInt(input.value);
-            const errorElement = document.getElementById(`${fieldName}-error`);
-            
-            if (input.value && (isNaN(value) || value < min || value > max)) {
-                input.style.borderColor = '#ff6b6b';
-                if (errorElement) {
-                    errorElement.textContent = `Must be between ${min} and ${max}`;
-                    errorElement.style.display = 'block';
-                }
-            } else {
-                input.style.borderColor = '#444';
-                if (errorElement) {
-                    errorElement.style.display = 'none';
-                }
+                errorMsg = `Server error: ${response.status} ${response.statusText}`;
             }
         }
-    </script>
-</body>
-</html>
+
+        throw new Error(errorMsg);
+    }
+
+    const result = await response.json();
+    console.log('Prediction result:', result);
+    return result;
+}
+
+/**
+ * Check API health
+ */
+async function checkAPIHealth() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        if (response.ok) {
+            console.log('✅ Backend API is running');
+            return true;
+        } else {
+            console.warn('⚠️ Backend API returned non-OK status');
+            return false;
+        }
+    } catch (error) {
+        console.warn('⚠️ Cannot connect to backend API:', error.message);
+        return false;
+    }
+}
+
+/**
+ * Display error message in a standardized way
+ */
+function displayError(message, containerId = 'error-container') {
+    const errorContainer = document.getElementById(containerId);
+    if (errorContainer) {
+        errorContainer.innerHTML = `
+            <div class="card" style="border-color: #ef4444; background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);">
+                <h3 style="color: #fca5a5;">Error</h3>
+                <p style="color: #fecaca;">${message}</p>
+            </div>
+        `;
+        errorContainer.style.display = 'block';
+        errorContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/**
+ * Hide error message
+ */
+function hideError(containerId = 'error-container') {
+    const errorContainer = document.getElementById(containerId);
+    if (errorContainer) {
+        errorContainer.style.display = 'none';
+    }
+}
+
+/**
+ * Show loading state for a button
+ */
+function setButtonLoading(button, loading = true) {
+    if (loading) {
+        // Store original text if not already stored
+        if (!button.dataset.originalText) {
+            button.dataset.originalText = button.textContent;
+        }
+        button.disabled = true;
+        button.innerHTML = '<span class="loading-spinner"></span>Processing...';
+    } else {
+        button.disabled = false;
+        button.innerHTML = button.dataset.originalText || 'Predict Kyphosis Risk';
+    }
+}
+
+/**
+ * Validate form input
+ */
+function validateInput(value, min, max, fieldName) {
+    const num = parseInt(value);
+
+    if (isNaN(num)) {
+        return `${fieldName} must be a valid number`;
+    }
+
+    if (num < min || num > max) {
+        return `${fieldName} must be between ${min} and ${max}`;
+    }
+
+    return null;
+}
+
+/**
+ * Format percentage for display
+ */
+function formatPercentage(decimal) {
+    return Math.round(decimal * 100);
+}
+
+/**
+ * Animate confidence bar
+ */
+function animateConfidenceBar(confidence) {
+    const bar = document.querySelector('.confidence-fill');
+    const text = document.querySelector('.confidence-text');
+
+    if (bar && text) {
+        // Start at 0 width
+        bar.style.width = '0%';
+
+        // Animate to final width
+        setTimeout(() => {
+            const percentage = formatPercentage(confidence);
+            bar.style.width = `${percentage}%`;
+            text.textContent = `Confidence: ${percentage}%`;
+        }, 100);
+    }
+}
+
+/**
+ * Smooth scroll to element
+ */
+function scrollToElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/**
+ * Initialize page-specific functionality
+ */
+function initPageSpecific() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
+    switch (currentPage) {
+        case 'predict.html':
+            if (typeof initPredictPage === 'function') {
+                initPredictPage();
+            }
+            break;
+        case 'about.html':
+            if (typeof initAboutPage === 'function') {
+                initAboutPage();
+            }
+            break;
+        case 'index.html':
+        case '':
+            if (typeof initHomePage === 'function') {
+                initHomePage();
+            }
+            break;
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    init();
+    initPageSpecific();
+
+    // Check API health on startup
+    checkAPIHealth();
+});
+
+// Handle network status
+window.addEventListener('online', function() {
+    console.log('✅ Network connection restored');
+    hideError('network-error');
+});
+
+window.addEventListener('offline', function() {
+    console.warn('⚠️ Network connection lost');
+    displayError('Network connection lost. Please check your internet connection.', 'network-error');
+});
